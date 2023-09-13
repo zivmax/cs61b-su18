@@ -82,7 +82,14 @@ public class IntList {
 
     public static IntList dcatenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        IntList trav = A;
+        while (trav.rest != null) {
+            trav = trav.rest;
+        }
+
+        trav.rest = B;
+
+        return A;
     }
 
     /**
@@ -91,7 +98,11 @@ public class IntList {
      */
     public static IntList catenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        if (A == null) {
+            return B;
+        }
+
+        return new IntList(A.first, catenate(A.rest, B));
     }
 
 
@@ -123,7 +134,9 @@ public class IntList {
 
     /**
      * Returns a new IntList containing the ints in ARGS. You are not
-     * expected to read or understand this method.
+     * expected to read or understand this method
+     *  
+     * .
      */
     public static IntList of(Integer... args) {
         IntList result, p;
@@ -144,7 +157,9 @@ public class IntList {
     /**
      * Returns true iff X is an IntList containing the same sequence of ints
      * as THIS. Cannot handle IntLists with cycles. You are not expected to
-     * read or understand this method.
+     * read or understand this method
+     *  
+     * .
      */
     public boolean equals(Object x) {
         if (!(x instanceof IntList)) {
@@ -166,12 +181,20 @@ public class IntList {
 
     /**
      * If a cycle exists in the IntList, this method
+     *  
+     * 
      * returns an integer equal to the item number of the location where the
      * cycle is detected.
      * <p>
      * If there is no cycle, the number 0 is returned instead. This is a
-     * utility method for lab2. You are not expected to read, understand, or
-     * even use this method. The point of this method is so that if you convert
+     * utility method
+     *  
+     *  for lab2. You are not expected to read, understand, or
+     * even use this method
+     *  
+     * . The point of this method
+     *  
+     *  is so that if you convert
      * an IntList into a String and that IntList has a loop, your computer
      * doesn't get stuck in an infinite loop.
      */
@@ -209,7 +232,9 @@ public class IntList {
 
     @Override
     /** Outputs the IntList as a String. You are not expected to read
-     * or understand this method. */
+     * or understand this method
+     *  
+     * . */
     public String toString() {
         Formatter out = new Formatter();
         String sep;
