@@ -56,9 +56,9 @@ public class NBody {
             StdDraw.show();
             StdDraw.pause(10);
             timer += dt;
-
-            StdOut.printf("%d\n", allPlanets.length);
         }
+
+        StdOut.printf("%d\n", allPlanets.length);
         StdOut.printf("%.2e\n", R);
         for (int i = 0; i < allPlanets.length; i++) {
             StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
