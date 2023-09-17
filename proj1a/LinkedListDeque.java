@@ -1,7 +1,7 @@
-public class LinkedListDeque<Data> {
+public class LinkedListDeque<T> {
     private class Node {
         private Node prev;
-        private Data item;
+        private T item;
         private Node next;
 
         public Node() {
@@ -10,7 +10,7 @@ public class LinkedListDeque<Data> {
             next = null;
         }
 
-        public Node(Node p, Data i, Node n) {
+        public Node(Node p, T i, Node n) {
             prev = p;
             item = i;
             next = n;
@@ -32,7 +32,7 @@ public class LinkedListDeque<Data> {
         size = 0;
     }
 
-    public void addFirst(Data item) {
+    public void addFirst(T item) {
         if (item == null) {
             return;
         }
@@ -46,7 +46,7 @@ public class LinkedListDeque<Data> {
 
     }
 
-    public void addLast(Data item) {
+    public void addLast(T item) {
         if (item == null) {
             return;
         }
@@ -59,12 +59,12 @@ public class LinkedListDeque<Data> {
         size++;
     }
 
-    public Data removeFirst() {
+    public T removeFirst() {
         if (size == 0) {
             return null;
         }
 
-        Data firstItem = first.item;
+        T firstItem = first.item;
         first.next.prev = first.prev;
         first = first.next;
         size--;
@@ -72,12 +72,12 @@ public class LinkedListDeque<Data> {
         return firstItem;
     }
 
-    public Data removeLast() {
+    public T removeLast() {
         if (size == 0) {
             return null;
         }
 
-        Data lastItem = last.item;
+        T lastItem = last.item;
         last.prev.next = last.next;
         last = last.prev;
         size--;
@@ -85,7 +85,7 @@ public class LinkedListDeque<Data> {
         return lastItem;
     }
 
-    public Data get(int index) {
+    public T get(int index) {
         if (index >= size) {
             return null;
         }
@@ -98,7 +98,7 @@ public class LinkedListDeque<Data> {
         return trav.item;
     }
 
-    public Data getRecursive(int index) {
+    public T getRecursive(int index) {
         if (index >= size) {
             return null;
         }
