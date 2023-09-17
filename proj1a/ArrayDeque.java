@@ -68,7 +68,6 @@ public class ArrayDeque<T> {
     }
 
     public T get(int index) {
-        
 
         return container[index];
     }
@@ -82,8 +81,8 @@ public class ArrayDeque<T> {
     }
 
     public void printDeque() {
-        for (T T : container) {
-            System.out.print(T);
+        for (T item : container) {
+            System.out.print(item);
             System.out.print(' ');
         }
     }
