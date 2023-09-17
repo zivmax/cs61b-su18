@@ -60,6 +60,10 @@ public class LinkedListDeque<Data> {
     }
 
     public Data removeFirst() {
+        if (size == 0) {
+            return null;
+        }
+
         Data firstItem = first.item;
         first.next.prev = first.prev;
         first = first.next;
@@ -69,6 +73,10 @@ public class LinkedListDeque<Data> {
     }
 
     public Data removeLast() {
+        if (size == 0) {
+            return null;
+        }
+
         Data lastItem = last.item;
         last.prev.next = last.next;
         last = last.prev;
