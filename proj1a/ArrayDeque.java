@@ -24,6 +24,8 @@ public class ArrayDeque<T> {
         for (int i = size; i >= 1; i--) {
             container[i] = container[i - 1];
         }
+
+        size++;
         container[0] = item;
     }
 
@@ -36,6 +38,7 @@ public class ArrayDeque<T> {
             resize(size * REFACTOR);
         }
 
+        size++;
         container[size] = item;
     }
 
@@ -65,6 +68,8 @@ public class ArrayDeque<T> {
     }
 
     public T get(int index) {
+        
+
         return container[index];
     }
 
