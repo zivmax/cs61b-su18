@@ -1,5 +1,3 @@
-import org.w3c.dom.Node;
-
 public class ArrayDeque<Data> {
     private int size;
     private final int REFACTOR;
@@ -86,7 +84,7 @@ public class ArrayDeque<Data> {
     }
 
     private void resize(int new_size) {
-        Data[] tmp = (Data[]) Object[new_size];
+        Data[] tmp = (Data[]) new Object[new_size];
         for (int i = 0; i < container.length; i++) {
             tmp[i] = container[i];
         }
