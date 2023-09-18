@@ -12,7 +12,7 @@ public class ArrayDeque<T> {
         LEAST_USAGE_RATIO = 0.25;
         size = 0;
         container = (T[]) new Object[8];
-        UpdateHeaders();
+        updateHeaders();
     }
 
     public void addFirst(T item) {
@@ -95,7 +95,7 @@ public class ArrayDeque<T> {
         int old_head = head;
         T[] tmp = container;
         container = (T[]) new Object[new_size];
-        UpdateHeaders();
+        updateHeaders();
 
         for (int i = 0, j = head, k = old_head; i < Math.min(new_size, size); i++) {
             container[j] = tmp[k];
@@ -104,7 +104,7 @@ public class ArrayDeque<T> {
         }
     }
 
-    private void UpdateHeaders() {
+    private void updateHeaders() {
         head = (container.length - size) / 2;
         tail = head + size - 1;
     }
