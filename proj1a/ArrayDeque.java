@@ -91,13 +91,13 @@ public class ArrayDeque<T> {
         }
     }
 
-    private void resize(int new_size) {
-        int old_head = head;
+    private void resize(int NewSize) {
+        int OldHeader = head;
         T[] tmp = container;
-        container = (T[]) new Object[new_size];
+        container = (T[]) new Object[NewSize];
         updateHeaders();
 
-        for (int i = 0, j = head, k = old_head; i < Math.min(new_size, size); i++) {
+        for (int i = 0, j = head, k = OldHeader; i < Math.min(NewSize, size); i++) {
             container[j] = tmp[k];
             j++;
             k++;
