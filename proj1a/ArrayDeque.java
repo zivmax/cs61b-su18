@@ -18,7 +18,7 @@ public class ArrayDeque<T> {
         }
 
         if (size == container.length) {
-            resize(size * REFACTOR);
+            resize(container.length * REFACTOR);
         }
 
         for (int i = size; i >= 1; i--) {
@@ -35,7 +35,7 @@ public class ArrayDeque<T> {
         }
 
         if (size == container.length) {
-            resize(size * REFACTOR);
+            resize(container.length * REFACTOR);
         }
 
         size++;
@@ -44,8 +44,8 @@ public class ArrayDeque<T> {
 
     public T removeFirst() {
         T firstItem = container[0];
-        if (size / container.length < LEAST_USAGE_RATIO && container.length > 16) {
-            resize(size / 2);
+        if (size / (double) container.length < LEAST_USAGE_RATIO && container.length >= 16) {
+            resize(container.length / 2);
         }
 
         if (size != 1) {
@@ -61,8 +61,8 @@ public class ArrayDeque<T> {
     public T removeLast() {
         T lastItem = container[size - 1];
 
-        if (size / container.length < LEAST_USAGE_RATIO && container.length > 16) {
-            resize(size / 2);
+        if (size / (double) container.length < LEAST_USAGE_RATIO && container.length >= 16) {
+            resize(container.length / 2);
         }
 
         size--;

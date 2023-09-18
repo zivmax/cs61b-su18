@@ -17,6 +17,10 @@ public class ArrayDequeTest {
             deque.addLast(i);
         }
         assertEquals(33, deque.size());
+
+        for (int i = 0; i < 30; i++) {
+            deque.removeFirst();
+        }
     }
 
     @Test
