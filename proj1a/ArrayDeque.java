@@ -1,7 +1,9 @@
 public class ArrayDeque<T> {
-    private int size;
     private final int REFACTOR;
     private final double LEAST_USAGE_RATIO;
+    private int size;
+    private int head;
+    private int tail;
 
     private T[] container;
 
@@ -10,6 +12,7 @@ public class ArrayDeque<T> {
         LEAST_USAGE_RATIO = 0.25;
         size = 0;
         container = (T[]) new Object[8];
+        UpdateHeaders();
     }
 
     public void addFirst(T item) {
@@ -17,16 +20,13 @@ public class ArrayDeque<T> {
             return;
         }
 
-        if (size == container.length) {
+        if (head == 0) {
             resize(container.length * REFACTOR);
         }
 
-        for (int i = size; i >= 1; i--) {
-            container[i] = container[i - 1];
-        }
-
+        head--;
         size++;
-        container[0] = item;
+        container[head] = item;
     }
 
     public void addLast(T item) {
@@ -34,44 +34,46 @@ public class ArrayDeque<T> {
             return;
         }
 
-        if (size == container.length) {
+        if (tail == container.length - 1) {
             resize(container.length * REFACTOR);
         }
 
+        tail++;
         size++;
-        container[size - 1] = item;
+        container[tail] = item;
     }
 
     public T removeFirst() {
-        T firstItem = container[0];
+        if (size == 0) {
+            return null;
+        }
+
         if (size / (double) container.length < LEAST_USAGE_RATIO && container.length >= 16) {
             resize(container.length / 2);
         }
 
-        if (size != 1) {
-            for (int i = 0; i < size - 1; i++) {
-                container[i] = container[i + 1];
-            }
-        }
-
+        head++;
         size--;
-        return firstItem;
+        return get(-1);
     }
 
     public T removeLast() {
-        T lastItem = container[size - 1];
+        if (size == 0) {
+            return null;
+        }
 
         if (size / (double) container.length < LEAST_USAGE_RATIO && container.length >= 16) {
             resize(container.length / 2);
         }
 
+        tail--;
         size--;
-        return lastItem;
+        return get(size);
     }
 
     public T get(int index) {
 
-        return container[index];
+        return container[head + index];
     }
 
     public boolean isEmpty() {
@@ -90,11 +92,20 @@ public class ArrayDeque<T> {
     }
 
     private void resize(int new_size) {
-        T[] tmp = (T[]) new Object[new_size];
-        for (int i = 0; i < Math.min(new_size, container.length); i++) {
-            tmp[i] = container[i];
-        }
+        int old_head = head;
+        T[] tmp = container;
+        container = (T[]) new Object[new_size];
+        UpdateHeaders();
 
-        container = tmp;
+        for (int i = 0, j = head, k = old_head; i < Math.min(new_size, size); i++) {
+            container[j] = tmp[k];
+            j++;
+            k++;
+        }
+    }
+
+    private void UpdateHeaders() {
+        head = (container.length - size) / 2;
+        tail = head + size - 1;
     }
 }
