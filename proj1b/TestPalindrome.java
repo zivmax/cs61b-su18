@@ -8,7 +8,7 @@ public class TestPalindrome {
 
     @Test
     public void testWordToDeque() {
-        Deque d = palindrome.wordToDeque("persiflage");
+        Deque<Character> d = palindrome.wordToDeque("persiflage");
         String actual = "";
         for (int i = 0; i < "persiflage".length(); i++) {
             actual += d.removeFirst();
@@ -17,11 +17,30 @@ public class TestPalindrome {
     }
 
     @Test
-    public void isPalindrome() {
+    public void testIsPalindrome() {
         assertTrue(palindrome.isPalindrome(""));
         assertTrue(palindrome.isPalindrome("a"));
         assertTrue(palindrome.isPalindrome("racecar"));
         assertFalse(palindrome.isPalindrome("caC"));
         assertFalse(palindrome.isPalindrome("cat"));
+
+        assertTrue(palindrome.isPalindrome("", new OffByOne()));
+        assertTrue(palindrome.isPalindrome("a", new OffByOne()));
+        assertTrue(palindrome.isPalindrome("abab", new OffByOne()));
+        assertTrue(palindrome.isPalindrome("chid", new OffByOne()));
+        assertTrue(palindrome.isPalindrome("hopi", new OffByOne()));
+        assertTrue(palindrome.isPalindrome("oban", new OffByOne()));
+        assertFalse(palindrome.isPalindrome("caac", new OffByOne()));
+        assertFalse(palindrome.isPalindrome("racecar", new OffByOne()));
+
+        assertTrue(palindrome.isPalindrome("", new OffByN(5)));
+        assertTrue(palindrome.isPalindrome("a", new OffByN(5)));
+        assertTrue(palindrome.isPalindrome("biding", new OffByN(5)));
+        assertTrue(palindrome.isPalindrome("moth", new OffByN(5)));
+        assertTrue(palindrome.isPalindrome("oint", new OffByN(5)));
+        assertFalse(palindrome.isPalindrome("stut", new OffByN(5)));
+        assertFalse(palindrome.isPalindrome("caac", new OffByN(5)));
+        assertFalse(palindrome.isPalindrome("racecar", new OffByN(5)));
+
     }
 }
