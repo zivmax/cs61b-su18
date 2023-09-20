@@ -11,7 +11,7 @@ public class Palindrome {
 
     public boolean isPalindrome(String word) {
         Deque<Character> wordDeque = wordToDeque(word);
-        for (int i = 0, j = wordDeque.size() - 1; i <= wordDeque.size() / 2;) {
+        for (int i = 0, j = wordDeque.size() - 1; i < wordDeque.size() / 2;) {
             if (wordDeque.get(i) != wordDeque.get(j)) {
                 return false;
             }
@@ -37,13 +37,12 @@ public class Palindrome {
     // }
 
     public boolean isPalindrome(String word, CharacterComparator cc) {
-        if (word.length() <= 1)
-        {
+        if (word.length() <= 1) {
             return true;
         }
-        
+
         Deque<Character> wordDeque = wordToDeque(word);
-        for (int i = 0, j = wordDeque.size() - 1; i <= wordDeque.size() / 2;) {
+        for (int i = 0, j = wordDeque.size() - 1; i < wordDeque.size() / 2;) {
             if (!cc.equalChars(wordDeque.get(i), wordDeque.get(j))) {
                 return false;
             }
