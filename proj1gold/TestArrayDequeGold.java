@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class TestArrayDequeGold {
     @Test
-    static public void testArrayDequeGold() {
+    public void testArrayDequeGold() {
         StudentArrayDeque<Integer> sad1 = new StudentArrayDeque<>();
         ArrayDequeSolution<Integer> sad2 = new ArrayDequeSolution<>();
         String msg = "";
@@ -36,8 +36,7 @@ public class TestArrayDequeGold {
             }
         }
     }
-
     public static void main(String[] args) {
-        testArrayDequeGold();
+        jh61b.junit.TestRunner.runTests(TestArrayDequeGold.class);
     }
 }
