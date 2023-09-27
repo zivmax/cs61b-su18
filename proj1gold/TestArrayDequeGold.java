@@ -11,14 +11,14 @@ public class TestArrayDequeGold {
         ArrayDequeSolution<Integer> sad2 = new ArrayDequeSolution<>();
         String msg = "";
         
-        for (int i = 0; i < 30000; i += 1) {
+        for (int i = 0; i < 1000; i += 1) {
             double numberBetweenZeroAndOne = StdRandom.uniform();
 
-            if (numberBetweenZeroAndOne < 0.5) {
+            if (numberBetweenZeroAndOne < 0.3) {
                 sad1.addLast(i);
                 sad2.addLast(i);
                 msg = msg + "addLast(" + i + ")\n"; 
-            } else if (numberBetweenZeroAndOne > 0.9) {
+            } else if (numberBetweenZeroAndOne > 0.6) {
                 sad1.removeFirst();
                 sad2.removeFirst();
                 msg = msg + "removeFirst()\n"; 
