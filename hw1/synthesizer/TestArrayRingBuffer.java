@@ -32,7 +32,6 @@ public class TestArrayRingBuffer {
                 assertEquals(bq.poll(), arb.dequeue());
             }
         }
-
     }
 
     @Test
@@ -53,13 +52,13 @@ public class TestArrayRingBuffer {
 
         for (ArrayRingBuffer<Integer> a : arb) {
             for (Integer i : a) {
-                
+                System.out.println(i);
             }
         }
 
-        assertEquals(a1.fillCount(), 0);
-        assertEquals(a2.fillCount(), 0);
-        assertEquals(a3.fillCount(), 0);
+        assertEquals(a1.fillCount(), 3);
+        assertEquals(a2.fillCount(), 3);
+        assertEquals(a3.fillCount(), 3);
     }
 
     /** Calls tests for ArrayRingBuffer. */

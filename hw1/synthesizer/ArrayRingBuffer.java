@@ -81,14 +81,20 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     }
 
     private class ArrayRingBufferIterator implements Iterator<T> {
+        private int pos;
+        
         @Override
         public T next() {
-            return dequeue();
+            if (!hasNext()) {
+                pos = first;
+            }
+
+            return rb[pos++];
         }
 
         @Override
         public boolean hasNext() {
-            return fillCount != 0;
+            return pos < last;
         }
     }
 
