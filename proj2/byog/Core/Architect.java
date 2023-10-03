@@ -1,7 +1,6 @@
 package byog.Core;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -10,13 +9,17 @@ import byog.TileEngine.Tileset;
 
 public class Architect {
 
-    public TETile[][] digCave(TETile[][] cave) {
+    public TETile[][] digCave(TETile[][] cave, Integer seed) {
+        if (seed != null) {
+            RANDOM.setSeed(seed);
+        }
         if (cave == null || cave[0] == null) {
             throw new IllegalArgumentException("Null argument");
         }
 
-        roomsCenPos = addRandomRooms(cave, 40, 1000);
+        roomsCenPos = addRandomRooms(cave, 15, 25);
         connectRooms(cave, roomsCenPos, 1000);
+        cleanMapVergeFloor(cave);
         finishWalls(cave);
         return cave;
     }
@@ -34,9 +37,7 @@ public class Architect {
 
     private static TETile[][] bufferGrid = new TETile[Game.WIDTH][Game.HEIGHT];
     private static final short MAX_ROOM_SIZE = 8;
-    private static final short MIN_ROOM_SIZE = 2;
-    private static final short MAX_HALLWAY_LEN = 18;
-    private static final short MIN_HALLWAY_LEN = 4;
+    private static final short MIN_ROOM_SIZE = 3;
 
     private static final Random RANDOM = new Random();
     private List<Position> roomsCenPos = new ArrayList<>();
@@ -60,7 +61,7 @@ public class Architect {
 
         List<Position> roomsCenPos = new ArrayList<>();
 
-        for (int numTempts = 0; numTempts < maxTempts - 1; numTempts++) {
+        for (int numTempts = 0; numTempts < maxTempts; numTempts++) {
 
             TETile[][] room = generateRandomRoom();
             int x = RANDOM.nextInt(grid.length - room.length);
@@ -113,97 +114,49 @@ public class Architect {
         return room;
     }
 
-    private TETile[][] generateRoom(int size) {
-        TETile[][] room = new TETile[size][size];
-
-        // Fill room with floor tiles
-        fillGrid(room, Tileset.FLOOR);
-
-        return room;
-    }
-
     private void connectRooms(TETile[][] grid, List<Position> roomsCenPos, int maxTempts) {
-        List<Position> connectedRooms = new ArrayList<>();
+        int room1Index = RANDOM.nextInt(roomsCenPos.size() - 1);
+        Position room1CenPos = roomsCenPos.get(room1Index);
 
-        for (int numTempts = 0; numTempts < maxTempts - 1; numTempts++) {
-            int room1Index = RANDOM.nextInt(roomsCenPos.size() - 1);
-            Position room1CenPos = roomsCenPos.get(room1Index);
-            List<Position> nearRooms = findNearRooms(roomsCenPos, room1Index, room1CenPos);
+        for (int numTempts = 0; numTempts < maxTempts; numTempts++) {
+            int room2Index = findNearestRoom(roomsCenPos, room1Index, room1CenPos);
+            Position room2CenPos = roomsCenPos.get(room2Index);
 
-            if (nearRooms.size() <= 1) {
-                continue;
-            }
+            connectTwoRooms(grid, room1CenPos, room2CenPos);
+            roomsCenPos.remove(room1Index);
 
-            int room2Index = RANDOM.nextInt(nearRooms.size() - 1);
-
-            Position room2CenPos = nearRooms.get(room2Index);
-
-            if (connectTwoRooms(grid, room1CenPos, room2CenPos)) {
-                connectedRooms.add(room1CenPos);
-                connectedRooms.add(room2CenPos);
-                roomsCenPos.remove(room1Index);
-                roomsCenPos.remove(room2Index);
-            }
-
-            if (roomsCenPos.size() == 0) {
+            if (roomsCenPos.size() == 1) {
                 break;
-            }
-
-            // Connect remain rooms with thier nearest connected rooms
-            for (int i = 0; i < roomsCenPos.size(); i++) {
-                Position roomCenPos = roomsCenPos.get(i);
-                Position nearRoomCenPos = findNearestRoom(connectedRooms, -1, roomCenPos);
-                if (nearRoomCenPos != null) {
-                    connectTwoRooms(grid, roomCenPos, nearRoomCenPos);
-                    connectedRooms.add(roomCenPos);
-                    roomsCenPos.remove(i);
-                }
+            } else {
+                room1Index = roomsCenPos.indexOf(room2CenPos);
+                room1CenPos = room2CenPos;
             }
         }
     }
 
-    private Position findNearestRoom(List<Position> bufferList, int roomIndex, Position roomCenPos) {
+    private int findNearestRoom(List<Position> bufferList, int roomIndex, Position roomCenPos) {
         // Find the nearest room
+        int nearestRoomIndex = 0;
         Position nearestRoom = new Position(0, 0);
         for (int i = 0; i < bufferList.size(); i++) {
-            if (roomIndex >= 0 && i == roomIndex) {
+            if (i == roomIndex) {
                 continue;
             }
             Position room2CenPos = bufferList.get(i);
             if (Math.abs(roomCenPos.x - room2CenPos.x) + Math.abs(roomCenPos.y - room2CenPos.y) < Math
                     .abs(roomCenPos.x - nearestRoom.x) + Math.abs(roomCenPos.y - nearestRoom.y)) {
+                nearestRoomIndex = i;
                 nearestRoom = room2CenPos;
             }
         }
 
-        return nearestRoom;
-    }
-
-    private List<Position> findNearRooms(List<Position> bufferList, int roomIndex, Position roomCenPos) {
-        // Found a list of rooms that near room
-        List<Position> nearRooms = new ArrayList<>();
-        for (int i = 0; i < bufferList.size(); i++) {
-            if (i != roomIndex) {
-                Position room2CenPos = bufferList.get(i);
-                if (Math.abs(roomCenPos.x - room2CenPos.x) <= MAX_HALLWAY_LEN
-                        && Math.abs(roomCenPos.y - room2CenPos.y) <= MAX_HALLWAY_LEN) {
-                    nearRooms.add(room2CenPos);
-                }
-            }
-        }
-        return nearRooms;
+        return nearestRoomIndex;
     }
 
     private boolean connectTwoRooms(TETile[][] grid, Position p1, Position p2) {
         Position midPoint = getMidPoint(grid, p1, p2);
         TETile[][] hallway1 = generateHallway(p1, midPoint);
         TETile[][] hallway2 = generateHallway(midPoint, p2);
-
-        // Check if hallway1 and hallway2 are too long
-        if (hallway1.length + hallway2.length > MAX_HALLWAY_LEN
-                || hallway1[0].length + hallway2[0].length > MAX_HALLWAY_LEN) {
-            return false;
-        }
 
         // Choose the right conner pos to insert hallway
         Direc midDirecToP1 = checkRelPos(midPoint, p1);
@@ -285,13 +238,7 @@ public class Architect {
 
     private TETile[][] generateHallway(Position startPos, Position endPos) {
         TETile[][] hallway = new TETile[Math.abs(endPos.x - startPos.x) + 1][Math.abs(endPos.y - startPos.y) + 1];
-        // if (startPos.x == endPos.x) {
-        // hallway = new TETile[1][Math.abs(endPos.y - startPos.y) + 1];
-        // } else {
-        // hallway = new TETile[Math.abs(endPos.x - startPos.x) + 1][1];
-        // }
 
-        // Fill hallway with floor tiles
         fillGrid(hallway, Tileset.FLOOR);
 
         return hallway;
@@ -352,5 +299,16 @@ public class Architect {
             }
         }
         return false;
+    }
+
+    private void cleanMapVergeFloor(TETile[][] grid) {
+        for (int i = 0; i < grid.length; i++) {
+            grid[i][0] = Tileset.NOTHING;
+            grid[i][grid[0].length - 1] = Tileset.NOTHING;
+        }
+        for (int j = 0; j < grid[0].length; j++) {
+            grid[0][j] = Tileset.NOTHING;
+            grid[grid.length - 1][j] = Tileset.NOTHING;
+        }
     }
 }

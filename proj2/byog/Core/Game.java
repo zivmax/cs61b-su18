@@ -20,7 +20,7 @@ public class Game {
         TETile[][] world = new TETile[WIDTH][HEIGHT];
         Architect architect = new Architect();
         architect.fillGrid(world, Tileset.NOTHING);
-        world = architect.digCave(world);
+        world = architect.digCave(world, null);
         ter.renderFrame(world);
         System.out.println("Frame rendered");
     }
@@ -47,11 +47,12 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
-        // and return a 2D tile representation of the world that would have been
-        // drawn if the same inputs had been given to playWithKeyboard().
+        int seed = Integer.valueOf(input.substring(1, input.length() - 1));
 
-        TETile[][] finalWorldFrame = null;
+        Architect architect = new Architect();
+        TETile[][] world = new TETile[WIDTH][HEIGHT];
+        architect.fillGrid(world, Tileset.NOTHING);
+        TETile[][] finalWorldFrame = architect.digCave(world, seed);
         return finalWorldFrame;
     }
 }
