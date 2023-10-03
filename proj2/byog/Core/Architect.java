@@ -135,6 +135,12 @@ public class Architect {
     }
 
     private int findNearestRoom(List<Position> bufferList, int roomIndex, Position roomCenPos) {
+        if (bufferList.size() == 1) {
+            return -1;
+        } else if (bufferList.size() == 2) {
+            return roomIndex == 0 ? 1 : 0;
+        }
+
         // Find the nearest room
         int nearestRoomIndex = 0;
         Position nearestRoom = new Position(0, 0);
