@@ -59,7 +59,7 @@ public class Architect {
 
     private List<Position> addRandomRooms(TETile[][] grid, int numRooms, int maxTempts) {
 
-        List<Position> roomsCenPos = new ArrayList<>();
+        List<Position> bufferList = new ArrayList<>();
 
         for (int numTempts = 0; numTempts < maxTempts; numTempts++) {
 
@@ -75,15 +75,15 @@ public class Architect {
 
             if (!areOverLapping(grid, room, new Position(0, 0), roomPos) && areaIsOnGrid(grid, room, roomPos)) {
                 insertArea(grid, room, roomPos);
-                roomsCenPos.add(roomCenPos);
+                bufferList.add(roomCenPos);
             }
 
-            if (roomsCenPos.size() == numRooms) {
+            if (bufferList.size() == numRooms) {
                 break;
             }
         }
 
-        return roomsCenPos;
+        return bufferList;
     }
 
     // Insert room into the p position of grid
@@ -114,21 +114,21 @@ public class Architect {
         return room;
     }
 
-    private void connectRooms(TETile[][] grid, List<Position> roomsCenPos, int maxTempts) {
-        int room1Index = RANDOM.nextInt(roomsCenPos.size() - 1);
-        Position room1CenPos = roomsCenPos.get(room1Index);
+    private void connectRooms(TETile[][] grid, List<Position> remainRoomsPos, int maxTempts) {
+        int room1Index = RANDOM.nextInt(remainRoomsPos.size() - 1);
+        Position room1CenPos = remainRoomsPos.get(room1Index);
 
         for (int numTempts = 0; numTempts < maxTempts; numTempts++) {
-            int room2Index = findNearestRoom(roomsCenPos, room1Index, room1CenPos);
-            Position room2CenPos = roomsCenPos.get(room2Index);
+            int room2Index = findNearestRoom(remainRoomsPos, room1Index, room1CenPos);
+            Position room2CenPos = remainRoomsPos.get(room2Index);
 
             connectTwoRooms(grid, room1CenPos, room2CenPos);
-            roomsCenPos.remove(room1Index);
+            remainRoomsPos.remove(room1Index);
 
-            if (roomsCenPos.size() == 1) {
+            if (remainRoomsPos.size() == 1) {
                 break;
             } else {
-                room1Index = roomsCenPos.indexOf(room2CenPos);
+                room1Index = remainRoomsPos.indexOf(room2CenPos);
                 room1CenPos = room2CenPos;
             }
         }
