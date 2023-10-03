@@ -48,11 +48,8 @@ public class Game {
      */
     public TETile[][] playWithInputString(String input) {
 
-        if (Character.isLetter(input.charAt(0))) {
-            input = input.substring(1);
-        } else if (Character.isLetter(input.charAt(input.length() - 1))) {
-            input = input.substring(0, input.length() - 1);
-        }
+        input = input.replaceAll("^[a-zA-Z]+", ""); // Remove letters at the beginning
+        input = input.replaceAll("[a-zA-Z]+$", ""); // Remove letters at the end
 
         long seed = Long.valueOf(input);
 
