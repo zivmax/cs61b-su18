@@ -15,7 +15,6 @@ public class Game {
      * menu.
      */
     public void playWithKeyboard() {
-
         ter.initialize(WIDTH, HEIGHT);
         TETile[][] world = new TETile[WIDTH][HEIGHT];
         Architect architect = new Architect();
@@ -23,6 +22,7 @@ public class Game {
         world = architect.digCave(world, null);
         ter.renderFrame(world);
         System.out.println("Frame rendered");
+
     }
 
     /**
@@ -47,7 +47,14 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        int seed = Integer.valueOf(input.substring(1, input.length() - 1));
+
+        if (Character.isLetter(input.charAt(0))) {
+            input = input.substring(1);
+        } else if (Character.isLetter(input.charAt(input.length() - 1))) {
+            input = input.substring(0, input.length() - 1);
+        }
+
+        int seed = Integer.valueOf(input);
 
         Architect architect = new Architect();
         TETile[][] world = new TETile[WIDTH][HEIGHT];

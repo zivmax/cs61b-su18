@@ -142,7 +142,7 @@ public class Architect {
         }
 
         // Find the nearest room
-        int nearestRoomIndex = 0;
+        int nearestRoomIndex = roomIndex == 0 ? 1 : 0;
         Position nearestRoom = new Position(0, 0);
         for (int i = 0; i < bufferList.size(); i++) {
             if (i == roomIndex) {
