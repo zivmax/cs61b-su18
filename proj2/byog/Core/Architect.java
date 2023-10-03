@@ -261,8 +261,8 @@ public class Architect {
     }
 
     private boolean areaIsOnGrid(TETile[][] grid, TETile[][] area, Position p) {
-        return p.x >= 0 && p.x + area.length < grid.length &&
-                p.y >= 0 && p.y + area[0].length < grid[0].length;
+        return p.x >= 0 && p.x + area.length < grid.length
+                && p.y >= 0 && p.y + area[0].length < grid[0].length;
     }
 
     private boolean areOverLapping(TETile[][] area1, TETile[][] area2, Position p1, Position p2) {
