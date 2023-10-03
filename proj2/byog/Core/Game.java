@@ -54,7 +54,7 @@ public class Game {
             input = input.substring(0, input.length() - 1);
         }
 
-        int seed = Integer.valueOf(input);
+        long seed = Integer.valueOf(input);
 
         Architect architect = new Architect();
         TETile[][] world = new TETile[WIDTH][HEIGHT];

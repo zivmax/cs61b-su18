@@ -9,7 +9,7 @@ import byog.TileEngine.Tileset;
 
 public class Architect {
 
-    public TETile[][] digCave(TETile[][] cave, Integer seed) {
+    public TETile[][] digCave(TETile[][] cave, Long seed) {
         if (seed != null) {
             RANDOM.setSeed(seed);
         }
