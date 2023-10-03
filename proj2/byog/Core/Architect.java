@@ -41,6 +41,7 @@ public class Architect {
 
     private static final Random RANDOM = new Random();
     private List<Position> roomsCenPos = new ArrayList<>();
+    private Position gridOrigin = new Position(0, 0);
 
     private enum Direc {
         UP, DOWN, LEFT, RIGHT,
@@ -73,9 +74,11 @@ public class Architect {
             // roomPos denotes the position of the room's bottom left corner
             Position roomPos = new Position(x, y);
 
-            if (!areOverLapping(grid, room, new Position(0, 0), roomPos) && areaIsOnGrid(grid, room, roomPos)) {
-                insertArea(grid, room, roomPos);
-                bufferList.add(roomCenPos);
+            if (!areOverLapping(grid, room, gridOrigin, roomPos)) {
+                if (areaIsOnGrid(grid, room, roomPos)) {
+                    insertArea(grid, room, roomPos);
+                    bufferList.add(roomCenPos);
+                }
             }
 
             if (bufferList.size() == numRooms) {
@@ -134,7 +137,7 @@ public class Architect {
         }
     }
 
-    private int findNearestRoom(List<Position> bufferList, int roomIndex, Position roomCenPos) {
+    private int findNearestRoom(List<Position> bufferList, int roomIndex, Position roomPos) {
         if (bufferList.size() == 1) {
             return -1;
         } else if (bufferList.size() == 2) {
@@ -149,8 +152,8 @@ public class Architect {
                 continue;
             }
             Position room2CenPos = bufferList.get(i);
-            if (Math.abs(roomCenPos.x - room2CenPos.x) + Math.abs(roomCenPos.y - room2CenPos.y) < Math
-                    .abs(roomCenPos.x - nearestRoom.x) + Math.abs(roomCenPos.y - nearestRoom.y)) {
+            if (Math.abs(roomPos.x - room2CenPos.x) + Math.abs(roomPos.y - room2CenPos.y) < Math
+                    .abs(roomPos.x - nearestRoom.x) + Math.abs(roomPos.y - nearestRoom.y)) {
                 nearestRoomIndex = i;
                 nearestRoom = room2CenPos;
             }
@@ -243,7 +246,9 @@ public class Architect {
     }
 
     private TETile[][] generateHallway(Position startPos, Position endPos) {
-        TETile[][] hallway = new TETile[Math.abs(endPos.x - startPos.x) + 1][Math.abs(endPos.y - startPos.y) + 1];
+        int width = Math.abs(endPos.x - startPos.x) + 1;
+        int height = Math.abs(endPos.y - startPos.y) + 1;
+        TETile[][] hallway = new TETile[width][height];
 
         fillGrid(hallway, Tileset.FLOOR);
 
@@ -256,7 +261,8 @@ public class Architect {
     }
 
     private boolean areaIsOnGrid(TETile[][] grid, TETile[][] area, Position p) {
-        return p.x >= 0 && p.x + area.length < grid.length && p.y >= 0 && p.y + area[0].length < grid[0].length;
+        return p.x >= 0 && p.x + area.length < grid.length &&
+                p.y >= 0 && p.y + area[0].length < grid[0].length;
     }
 
     private boolean areOverLapping(TETile[][] area1, TETile[][] area2, Position p1, Position p2) {
