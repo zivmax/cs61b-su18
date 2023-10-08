@@ -7,7 +7,7 @@ import java.util.Random;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
-public class Architect {
+public class Architect implements java.io.Serializable {
 
     public TETile[][] digCave(TETile[][] cave, Long seed) {
         if (seed != null) {
@@ -17,11 +17,30 @@ public class Architect {
             throw new IllegalArgumentException("Null argument");
         }
         fillGrid(cave, Tileset.NOTHING);
-        roomsCenPos = addRandomRooms(cave, 15, 25);
-        connectRooms(cave, roomsCenPos, 1000);
+        roomsCenPos = addRandomRooms(cave, 20, 600);
+        connectRooms(cave, copyList(roomsCenPos), 1000);
+        connectRooms(cave, copyList(roomsCenPos), 400);
+        addRandomThings(cave, MAX_ROOM_SIZE * 13, Tileset.GRASS);
         cleanMapVergeFloor(cave);
         finishWalls(cave);
+        insertExitDoor(cave);
         return cave;
+    }
+
+    public TETile[][] buildOutSideWorld(TETile[][] world, Long seed) {
+        if (seed != null) {
+            RANDOM.setSeed(seed);
+        }
+        if (world == null || world[0] == null) {
+            throw new IllegalArgumentException("Null argument");
+        }
+        fillGrid(world, Tileset.FLOOR);
+        addRandomThings(world, Game.WIDTH * 6, Tileset.GRASS);
+        addRandomThings(world, Game.WIDTH * 2, Tileset.TREE);
+        surrondWithThings(world, 3, Tileset.MOUNTAIN);
+        replace(world, Tileset.FLOOR, Tileset.NOTHING);
+        insertExitMouth(world);
+        return world;
     }
 
     public void fillGrid(TETile[][] grid, TETile type) {
@@ -36,7 +55,7 @@ public class Architect {
     }
 
     private static TETile[][] bufferGrid = new TETile[Game.WIDTH][Game.HEIGHT];
-    private static final short MAX_ROOM_SIZE = 8;
+    private static final short MAX_ROOM_SIZE = 7;
     private static final short MIN_ROOM_SIZE = 3;
 
     private static final Random RANDOM = new Random();
@@ -47,7 +66,6 @@ public class Architect {
         UP, DOWN, LEFT, RIGHT,
         UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
     }
-
 
     private List<Position> addRandomRooms(TETile[][] grid, int numRooms, int maxTempts) {
 
@@ -295,7 +313,8 @@ public class Architect {
                 int newY = p.y + yOffset;
 
                 if (posIsOnGrid(grid, new Position(newX, newY))) {
-                    if (grid[newX][newY] == Tileset.FLOOR) {
+                    if (grid[newX][newY] == Tileset.FLOOR
+                            || grid[newX][newY] == Tileset.GRASS) {
                         return true;
                     }
                 }
@@ -314,4 +333,88 @@ public class Architect {
             grid[grid.length - 1][j] = Tileset.NOTHING;
         }
     }
+
+    private void insertExitDoor(TETile[][] grid) {
+        int x = RANDOM.nextInt(grid.length);
+        int y = RANDOM.nextInt(grid[0].length);
+
+        while (grid[x][y] != Tileset.WALL) {
+            x = RANDOM.nextInt(grid.length);
+            y = RANDOM.nextInt(grid[0].length);
+        }
+
+        grid[x][y] = Tileset.UNLOCKED_DOOR;
+    }
+
+    // This create the mouth of the cave, which surrounded by mountains
+    private void insertExitMouth(TETile[][] grid) {
+        int x = RANDOM.nextInt(grid.length - 9) + 4;
+        int y = RANDOM.nextInt(grid[0].length - 9) + 4;
+
+        // Create a rectangle of mountains
+        for (int i = x - 1; i <= x + 1; i++) {
+            for (int j = y - 1; j <= y + 1; j++) {
+                if (posIsOnGrid(grid, new Position(i, j))) {
+                    grid[i][j] = Tileset.MOUNTAIN;
+                }
+            }
+        }
+
+        grid[x][y] = Tileset.LOCKED_DOOR;
+        // Open a hole of the rectangle of moutains
+        grid[x][y - 1] = Tileset.NOTHING;
+
+    }
+
+    private void addRandomThings(TETile[][] grid, int numThing, TETile thingType) {
+        for (int i = 0; i < numThing; i++) {
+            int x = RANDOM.nextInt(grid.length);
+            int y = RANDOM.nextInt(grid[0].length);
+
+            while (true) {
+                if (!grid[x][y].equals(Tileset.WALL)
+                        && !grid[x][y].equals(Tileset.NOTHING)
+                        && !grid[x][y].equals(thingType)) {
+                    break;
+                }
+                x = RANDOM.nextInt(grid.length);
+                y = RANDOM.nextInt(grid[0].length);
+            }
+
+            grid[x][y] = thingType;
+        }
+    }
+
+    // Surrond the grid's verge with numLayer layers of thingType
+    private void surrondWithThings(TETile[][] grid, int numLayer, TETile thingType) {
+        for (int i = 0; i < numLayer; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                grid[i][j] = thingType;
+                grid[grid.length - 1 - i][j] = thingType;
+            }
+            for (int k = 0; k < grid.length; k++) {
+                grid[k][i] = thingType;
+                grid[k][grid[0].length - 1 - i] = thingType;
+            }
+        }
+    }
+
+    private void replace(TETile[][] grid, TETile oldType, TETile newType) {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j].equals(oldType)) {
+                    grid[i][j] = newType;
+                }
+            }
+        }
+    }
+
+    private List<Position> copyList(List<Position> list) {
+        List<Position> copy = new ArrayList<>();
+        for (Position p : list) {
+            copy.add(p);
+        }
+        return copy;
+    }
+
 }

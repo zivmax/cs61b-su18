@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.Font;
 
@@ -44,7 +45,8 @@ public class Game {
             }
         }
 
-        play(world);
+        ter.initialize(WIDTH, HEIGHT);
+        playInDark(world);
     }
 
     /**
@@ -69,16 +71,77 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
+        input = input.toLowerCase();
 
-        input = input.replaceAll("^[a-zA-Z]+", ""); // Remove letters at the beginning
-        input = input.replaceAll("[a-zA-Z]+$", ""); // Remove letters at the end
+        World world = new World();
 
-        long seed = Long.valueOf(input);
+        // First parse the menu input
+        String menuChosen = input.substring(0, 1);
+        if (menuChosen.equals("n")) {
+            long seed = parseSeed(input);
+            world = new World(seed);
+        } else if (menuChosen.equals("l")) {
+            world = loadWorld();
+        } else if (menuChosen.equals("q")) {
+            System.exit(0);
+        } else {
+            System.out.println("Invalid input");
+            System.exit(0);
+        }
 
-        Architect architect = new Architect();
-        TETile[][] world = new TETile[WIDTH][HEIGHT];
-        TETile[][] finalWorldFrame = architect.digCave(world, seed);
-        return finalWorldFrame;
+        input.replaceAll("[0-9]+", "");
+        boolean win = false;
+        // Next proccess the letter one by one
+        for (int i = 1; i < input.length(); i++) {
+            int x = world.getPlayerPos().x;
+            int y = world.getPlayerPos().y;
+
+            String letter = input.substring(i, i + 1);
+            if (letter.equals("w")) {
+                world.updatePlayer(x, y + 1, world.getCarve());
+            } else if (letter.equals("a")) {
+                world.updatePlayer(x - 1, y, world.getCarve());
+            } else if (letter.equals("s")) {
+                world.updatePlayer(x, y - 1, world.getCarve());
+            } else if (letter.equals("d")) {
+                world.updatePlayer(x + 1, y, world.getCarve());
+            } else if (letter.equals(":")) {
+                if (input.substring(i + 1, i + 2).equals("q")) {
+                    saveWorld(world);
+                    break;
+                }
+            }
+
+            if (!win && playerWin(world)) {
+                win = true;
+            }
+
+            if (win) {
+                world.initPlayerPos(world.getWorldOutside());
+                if (letter.equals("w")) {
+                    world.updatePlayer(x, y + 1, world.getWorldOutside());
+                } else if (letter.equals("a")) {
+                    world.updatePlayer(x - 1, y, world.getWorldOutside());
+                } else if (letter.equals("s")) {
+                    world.updatePlayer(x, y - 1, world.getWorldOutside());
+                } else if (letter.equals("d")) {
+                    world.updatePlayer(x + 1, y, world.getWorldOutside());
+                } else if (letter.equals(":")) {
+                    if (input.substring(i + 1, i + 2).equals("q")) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return win ? world.getWorldOutsideWithPlayer() : world.getDarkGrid(world.getCarveWithPlayer());
+    }
+
+    private long parseSeed(String input) {
+        String regex = "(?<=[0-9]+)[a-zA-Z:]+";
+        String seed = input.substring(1, input.length()).replaceAll(regex, "");
+
+        return Long.valueOf(seed);
     }
 
     private static World loadWorld() {
@@ -153,27 +216,28 @@ public class Game {
         }
     }
 
-    private void play(World world) {
-        ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(world.getWorldWithPlayer());
+    private void playInDark(World world) {
+        ter.renderFrame(world.getDarkGrid(world.getCarveWithPlayer()));
 
         while (true) {
             String keyTyped = listenToKeyboard();
+            int x = world.getPlayerPos().x;
+            int y = world.getPlayerPos().y;
             if (keyTyped.equals("w")) {
-                world.updatePlayer(world.getPlayerPos().x, world.getPlayerPos().y + 1);
+                world.updatePlayer(x, y + 1, world.getCarve());
             } else if (keyTyped.equals("a")) {
-                world.updatePlayer(world.getPlayerPos().x - 1, world.getPlayerPos().y);
+                world.updatePlayer(x - 1, y, world.getCarve());
             } else if (keyTyped.equals("s")) {
-                world.updatePlayer(world.getPlayerPos().x, world.getPlayerPos().y - 1);
+                world.updatePlayer(x, y - 1, world.getCarve());
             } else if (keyTyped.equals("d")) {
-                world.updatePlayer(world.getPlayerPos().x + 1, world.getPlayerPos().y);
+                world.updatePlayer(x + 1, y, world.getCarve());
             } else if (keyTyped.equals(":")) {
                 while (true) {
                     if (StdDraw.hasNextKeyTyped()) {
                         char c = StdDraw.nextKeyTyped();
                         if (c == 'q') {
                             saveWorld(world);
-                            System.exit(0);
+                            return;
                         } else {
                             break;
                         }
@@ -183,8 +247,53 @@ public class Game {
                 continue;
             }
 
-            ter.renderFrame(world.getWorldWithPlayer());
+            ter.renderFrame(world.getDarkGrid(world.getCarveWithPlayer()));
+            if (playerWin(world)) {
+                break;
+            }
         }
+        world.initPlayerPos(world.getWorldOutside());
+        playInLight(world);
+    }
+
+    private void playInLight(World world) {
+        ter.renderFrame(world.getWorldOutsideWithPlayer());
+
+        while (true) {
+            String keyTyped = listenToKeyboard();
+            int x = world.getPlayerPos().x;
+            int y = world.getPlayerPos().y;
+            if (keyTyped.equals("w")) {
+                world.updatePlayer(x, y + 1, world.getWorldOutside());
+            } else if (keyTyped.equals("a")) {
+                world.updatePlayer(x - 1, y, world.getWorldOutside());
+            } else if (keyTyped.equals("s")) {
+                world.updatePlayer(x, y - 1, world.getWorldOutside());
+            } else if (keyTyped.equals("d")) {
+                world.updatePlayer(x + 1, y, world.getWorldOutside());
+            } else if (keyTyped.equals(":")) {
+                while (true) {
+                    if (StdDraw.hasNextKeyTyped()) {
+                        char c = StdDraw.nextKeyTyped();
+                        if (c == 'q') {
+                            break;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                continue;
+            }
+
+            ter.renderFrame(world.getWorldOutsideWithPlayer());
+        }
+    }
+
+    private boolean playerWin(World world) {
+        int x = world.getPlayerPos().x;
+        int y = world.getPlayerPos().y;
+        return world.getCarve()[x][y].equals(Tileset.UNLOCKED_DOOR);
     }
 
     private long inputSeed() {
