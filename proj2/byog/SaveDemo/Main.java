@@ -80,7 +80,7 @@ public class Main {
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(w);
             os.close();
-        }  catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             System.out.println("file not found");
             System.exit(0);
         } catch (IOException e) {

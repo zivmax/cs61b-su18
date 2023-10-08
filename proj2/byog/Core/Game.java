@@ -16,7 +16,7 @@ import edu.princeton.cs.introcs.StdDraw;
 import java.awt.Font;
 
 public class Game {
-    public TERenderer ter = new TERenderer();
+    private TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 61;
     public static final int HEIGHT = 41;
@@ -134,7 +134,11 @@ public class Game {
             }
         }
 
-        return win ? world.getWorldOutsideWithPlayer() : world.getDarkGrid(world.getCarveWithPlayer());
+        if (win) {
+            return world.getWorldOutsideWithPlayer();
+        } else {
+            return world.getDarkGrid(world.getCarveWithPlayer());
+        }
     }
 
     private long parseSeed(String input) {
