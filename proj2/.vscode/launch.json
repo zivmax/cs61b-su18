@@ -16,7 +16,7 @@
             "request": "launch",
             "mainClass": "byog.Core.Main",
             "projectName": "proj2_dae8520c",
-            "args": "n4031671086352609271saasaasdaw"
+            "args": "l4031671086352609271saasaasdaw:q"
         },
         {
             "type": "java",

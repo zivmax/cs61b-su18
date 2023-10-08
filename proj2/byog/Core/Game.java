@@ -150,35 +150,37 @@ public class Game {
 
     private static World loadWorld() {
         File f = new File("./world.ser");
-        if (f.exists()) {
-            try {
-                FileInputStream fs = new FileInputStream(f);
-                ObjectInputStream os = new ObjectInputStream(fs);
-                World loadWorld = (World) os.readObject();
-                os.close();
-                return loadWorld;
-            } catch (FileNotFoundException e) {
-                System.out.println("file not found");
-                System.exit(0);
-            } catch (IOException e) {
-                System.out.println(e);
-                System.exit(0);
-            } catch (ClassNotFoundException e) {
-                System.out.println("class not found");
-                System.exit(0);
-            }
+
+        try {
+            // if (!f.exists()) {
+            // /* In the case no World has been saved yet, we return a new one. */
+            // return new World();
+            // }
+            FileInputStream fs = new FileInputStream(f);
+            ObjectInputStream os = new ObjectInputStream(fs);
+            World loadWorld = (World) os.readObject();
+            os.close();
+            return loadWorld;
+        } catch (FileNotFoundException e) {
+            System.out.println("file not found");
+            System.exit(0);
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(0);
+        } catch (ClassNotFoundException e) {
+            System.out.println("class not found");
+            System.exit(0);
         }
 
-        /* In the case no World has been saved yet, we return a new one. */
         return new World();
     }
 
     private static void saveWorld(World w) {
         File f = new File("./world.ser");
         try {
-            if (!f.exists()) {
-                f.createNewFile();
-            }
+            // if (!f.exists()) {
+            // f.createNewFile();
+            // }
             FileOutputStream fs = new FileOutputStream(f);
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(w);
