@@ -1,5 +1,7 @@
 package byog.Core;
 
+import java.util.Random;
+
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
@@ -56,7 +58,10 @@ public class World implements java.io.Serializable {
     }
 
     public Position initPlayerPos(TETile[][] grid) {
-        this.playerPos = new Position((int) Math.random() * width, (int) Math.random() * height);
+        Random rand = new Random(seed);
+        this.playerPos = new Position(0, 0);
+        playerPos.x = rand.nextInt(grid.length);
+        playerPos.y = rand.nextInt(grid[0].length);
 
         // If the grid contains locked door, the player appears at the door
         for (int i = 0; i < width; i++) {
@@ -77,8 +82,8 @@ public class World implements java.io.Serializable {
                 || grid[playerPos.x][playerPos.y].equals(Tileset.NOTHING)
                 || grid[playerPos.x][playerPos.y].equals(Tileset.MOUNTAIN)
                 || grid[playerPos.x][playerPos.y].equals(Tileset.TREE)) {
-            this.playerPos.x = (int) (Math.random() * width);
-            this.playerPos.y = (int) (Math.random() * height);
+            playerPos.x = rand.nextInt(grid.length);
+            playerPos.y = rand.nextInt(grid[0].length);
         }
 
         return playerPos;
