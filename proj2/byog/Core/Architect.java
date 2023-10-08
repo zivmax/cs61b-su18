@@ -16,7 +16,7 @@ public class Architect {
         if (cave == null || cave[0] == null) {
             throw new IllegalArgumentException("Null argument");
         }
-
+        fillGrid(cave, Tileset.NOTHING);
         roomsCenPos = addRandomRooms(cave, 15, 25);
         connectRooms(cave, roomsCenPos, 1000);
         cleanMapVergeFloor(cave);
@@ -48,15 +48,6 @@ public class Architect {
         UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT
     }
 
-    private class Position {
-        private int x;
-        private int y;
-
-        private Position(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
 
     private List<Position> addRandomRooms(TETile[][] grid, int numRooms, int maxTempts) {
 

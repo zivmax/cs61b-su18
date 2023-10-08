@@ -1,0 +1,65 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "byog.Core.Main",
+            "projectName": "proj2_dae8520c",
+        },
+        {
+            "type": "java",
+            "name": "SaveDemo",
+            "request": "launch",
+            "mainClass": "byog.SaveDemo.Main",
+            "projectName": "proj2_dae8520c"
+        },
+        {
+            "type": "java",
+            "name": "BoringWorldDemo",
+            "request": "launch",
+            "mainClass": "byog.lab5.BoringWorldDemo",
+            "projectName": "proj2_dae8520c"
+        },
+        {
+            "type": "java",
+            "name": "HexWorld",
+            "request": "launch",
+            "mainClass": "byog.lab5.HexWorld",
+            "projectName": "proj2_dae8520c"
+        },
+        {
+            "type": "java",
+            "name": "RandomWorldDemo",
+            "request": "launch",
+            "mainClass": "byog.lab5.RandomWorldDemo",
+            "projectName": "proj2_dae8520c"
+        },
+        {
+            "type": "java",
+            "name": "MemoryGame",
+            "request": "launch",
+            "mainClass": "byog.lab6.MemoryGame",
+            "projectName": "proj2_dae8520c",
+            "args": "123"
+        },
+        {
+            "type": "java",
+            "name": "MemoryGameSolution",
+            "request": "launch",
+            "mainClass": "byog.lab6.MemoryGameSolution",
+            "projectName": "proj2_dae8520c",
+            "args": "123"
+        }
+    ]
+}
